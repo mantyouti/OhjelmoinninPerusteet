@@ -106,7 +106,7 @@ def vahvistetut_tulot(varaukset: list):
         if (varaus[8]):
             kokonaistulot += varaus[6] * varaus[7]
     muokattu_kokonaistulot = str(round(kokonaistulot, 2)).replace(".", ",")
-    print(f"-Vahvistettujen varausten kokonaistulot: {muokattu_kokonaistulot} €")
+    print(f"- Vahvistettujen varausten kokonaistulot: {muokattu_kokonaistulot} €")
     
     print()
 
@@ -121,7 +121,7 @@ def main():
     varausten_vahvistusstatus(varaukset)
     print(("4) Yhteenveto vahvistuksista"))
     varausten_lkm(varaukset)
-    print(("5)Vahvistettujen varausten kokonaistulot"))
+    print(("5) Vahvistettujen varausten kokonaistulot"))
     vahvistetut_tulot(varaukset)
 
 
