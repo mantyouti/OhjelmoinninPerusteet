@@ -22,13 +22,9 @@ int | str | str | str | datetime.date | datetime.time | int | float | bool | str
 from datetime import datetime
 
 def muunna_varaustiedot(varaus: list) -> list:
-    # Tähän tulee siis varaus oletustietotyypeillä (str)
-    # Varauksessa on 11 saraketta -> Lista -> Alkiot 0-10
-    # Muuta tietotyypit haluamallasi tavalla -> Seuraavassa esimerkki ensimmäisestä alkioista
+
     muutettu_varaus = []
-    # Ensimmäisen alkion = varaus[0] muunnos
     muutettu_varaus.append(int(varaus[0]))
-    # Ja tästä jatkuu
     muutettu_varaus.append(str(varaus[1]))
     muutettu_varaus.append(str(varaus[2]))
     muutettu_varaus.append(str(varaus[3]))
@@ -42,8 +38,7 @@ def muunna_varaustiedot(varaus: list) -> list:
     return muutettu_varaus
 
 def hae_varaukset(varaustiedosto: str) -> list:
-    # HUOM! Tälle funktioille ei tarvitse tehdä mitään!
-    # Jos muutat, kommentoi miksi muutit
+
     varaukset = []
     varaukset.append(["varausId", "nimi", "sähköposti", "puhelin", "varauksenPvm", "varauksenKlo", "varauksenKesto", "hinta", "varausVahvistettu", "varattuTila", "varausLuotu"])
     with open(varaustiedosto, "r", encoding="utf-8") as f:
@@ -52,7 +47,6 @@ def hae_varaukset(varaustiedosto: str) -> list:
             varaustiedot = varaus.split('|')
             varaukset.append(muunna_varaustiedot(varaustiedot))
     return varaukset
-
 
 def vahvistetut_varaukset(varaukset: list):
     for varaus in varaukset[1:]:
@@ -130,17 +124,6 @@ def main():
     print(("5)Vahvistettujen varausten kokonaistulot"))
     vahvistetut_tulot(varaukset)
 
-
-
-
-
-    #print(" | ".join(varaukset[0]))
-    #print("------------------------------------------------------------------------")
-    #for varaus in varaukset[1:]:
-    #    print(" | ".join(str(x) for x in varaus))
-    #    tietotyypit = [type(x).__name__ for x in varaus]
-    #    print(" | ".join(tietotyypit))
-    #    print("------------------------------------------------------------------------")
 
 if __name__ == "__main__":
     main()
