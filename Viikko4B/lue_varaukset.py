@@ -1,5 +1,4 @@
 
-
 from datetime import datetime
 
 def muunna_varaustiedot(varaus: list) -> list:
@@ -28,6 +27,8 @@ def hae_varaukset(varaustiedosto: str) -> list:
             varaustiedot = varaus.split('|')
             varaukset.append(muunna_varaustiedot(varaustiedot))
     return varaukset
+
+    print()
 
 def vahvistetut_varaukset(varaukset: list):
     for varaus in varaukset[1:]:
@@ -66,7 +67,6 @@ def varausten_lkm(varaukset: list):
 
     print()
 
-
 def varausten_lkm(varaukset: list):
     vahvistetut_varaukset_2 = 0
     ei_vahvistetut_varaukset_2 = 0
@@ -94,6 +94,7 @@ def vahvistetut_tulot(varaukset: list):
 def main():
 
     varaukset = hae_varaukset("varaukset.txt")
+    print()
     print ("1) Vahvistetut varaukset")
     vahvistetut_varaukset(varaukset)
     print(("2) Pitkät varaukset (≥ 3 h)"))
