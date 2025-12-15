@@ -1,5 +1,5 @@
 # Copyright (c) 2025 Ville Heikkiniemi
-#
+# 
 # This code is licensed under the MIT License.
 # You are free to use, modify, and distribute this code,
 # provided that the original copyright notice is retained.
@@ -8,7 +8,6 @@
 
 
 from datetime import datetime, date # Tuodaan datetime- ja date-luokat datetime-kirjastosta
-
 
 def muunna_tiedot(kulutusTuotanto: list) -> list: # Muuntaa tietorivin oikeisiin tietotyyppeihin
     muutettu_tietorivi = [] # Lista muunnetuista tiedoista
@@ -31,7 +30,6 @@ def lue_data(tiedoston_nimi: str) -> list: #Lukee CSV-tiedoston ja palauttaa riv
             kulutusTuotantoTiedot.append(muunna_tiedot(kulutusTuotantoTietoSarakkeet)) # Muunnetaan sarakkeet oikeisiin tietotyyppeihin ja lisätään lista päälistaan
     return kulutusTuotantoTiedot #palauttaa listan, jossa jokainen alkio on lista yhdestä rivistä
 
-
 def paivantiedot(paiva: str, lukemat: list) -> list: # Laskee annetun päivän kulutukset ja tuotannot vaiheittain
     
     lasketutTiedot = [] # Lista, johon tallennetaan lasketut tiedot
@@ -47,7 +45,6 @@ def paivantiedot(paiva: str, lukemat: list) -> list: # Laskee annetun päivän k
             tuotanto2vaihe += lukema[5]
             tuotanto3vaihe += lukema[6]
 
-
     lasketutTiedot.append(kulutus1vaihe/1000)  # Muutetaan Wh -> kWh jakamalla 1000:lla
     lasketutTiedot.append(kulutus2vaihe/1000)
     lasketutTiedot.append(kulutus3vaihe/1000)
@@ -56,10 +53,10 @@ def paivantiedot(paiva: str, lukemat: list) -> list: # Laskee annetun päivän k
     lasketutTiedot.append(tuotanto3vaihe/1000)
     return lasketutTiedot
 
-
 def main(): #ohjelman pääfunktio, lukee datan, laskee yhteenvedot ja tulostaa ne
 
     lukemat = lue_data("viikko42.csv") # kutsuu lue_data-funktiota ja tallentaa paluuarvon muuttujaan lukemat
+    print()
     print("Viikon 42 sähkönkulutus ja -tuotanto (kWh, vaiheittain)") #tulostaa otsikon
     print()
     print("Päivä            Pvm             Kulutus [kWh]                 Tuotanto [kWh]")
