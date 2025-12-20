@@ -1,6 +1,6 @@
 ------------------------------------------------
--Raportti vuodelta 2025
--Vuoden kokonaiskulutus 7396.84 kWh
--Vuoden kokonaistuotanto 2922.38 kWh
--Vuoden keskimääräinen lämpötila 7.83 °C
+-Raportti ajalta 01.01.2025 - 31.01.2025
+-Aikavälin kokonaiskulutus 1545.24 kWh
+-Aikavälin kokonaistuotanto 0.00 kWh
+-Aikavälin keskimääräinen lämpötila -1.82 °C
 -----------------------------------------------

@@ -99,7 +99,6 @@ def raportti_vuosi(vuosi: int, tietokanta: list) -> str: # Funktio luo raportin 
 def main(): # Pääohjelma
         # luetaan data tiedostosta:
     kulutusTuotanto2025 = lue_data("2025.csv")
-    #print (len(kulutusTuotanto2025))
 
     while True:
         print("Valitse raporttityyppi:")
@@ -113,6 +112,7 @@ def main(): # Pääohjelma
                 loppupaiva = input("Anna loppupäivä (pv.kk.vvvv):")
                 raportti = raportti_aikavali(alkupaiva, loppupaiva, kulutusTuotanto2025)
                 print(raportti)
+                print()
         elif eka_valinta == 2: # Kutsu funktiota, joka käsittelee kuukausikohtaisen yhteenvedon
                 kuukausi = int(input("Anna kuukausi (1-12):"))
                 raportti = raportti_kuukausi(kuukausi, kulutusTuotanto2025)
@@ -123,8 +123,11 @@ def main(): # Pääohjelma
                 raportti = raportti_vuosi(vuosi, kulutusTuotanto2025)
                 print(raportti)
 
-        if eka_valinta == 4:
-                print("Lopetetaan ohjelma.") 
+        elif eka_valinta == 4:
+                print("Lopetetaan ohjelma.")
+                break
+        else:
+                continue
 
         print("Mitä haluat tehdä seuraavaksi?")
         print("1) Kirjoita raportti tiedostoon raportti.txt")
@@ -147,7 +150,7 @@ def main(): # Pääohjelma
                 break
         continue
 
-print("----------------------")
+print()
 
 if __name__ == "__main__":
     main()
