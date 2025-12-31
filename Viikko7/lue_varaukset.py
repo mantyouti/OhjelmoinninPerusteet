@@ -6,79 +6,96 @@
 #
 # See LICENSE file in the project root for full license information.
 
+'''aion käyttää sanakirjaa tässä tehtävässä'''
+
 from datetime import datetime
+from typing import List, Dict, Any
 
-def muunna_varaustiedot(varaus: list) -> list:
-    muutettu_varaus = []
-    muutettu_varaus.append(int(varaus[0]))
-    muutettu_varaus.append(varaus[1])
-    muutettu_varaus.append(varaus[2])
-    muutettu_varaus.append(varaus[3])
-    muutettu_varaus.append(datetime.strptime(varaus[4], "%Y-%m-%d").date())
-    muutettu_varaus.append(datetime.strptime(varaus[5], "%H:%M").time())
-    muutettu_varaus.append(int(varaus[6]))
-    muutettu_varaus.append(float(varaus[7]))
-    muutettu_varaus.append(varaus[8].lower() == "true")
-    muutettu_varaus.append(varaus[9])
-    muutettu_varaus.append(datetime.strptime(varaus[10], "%Y-%m-%d %H:%M:%S"))
-    return muutettu_varaus
+def muunna_varaustiedot(varaus: List[str]) -> Dict[str, Any]:
+    """
+    Muuntaa listan (pituus 11) dictiksi oikeilla tyypeillä.
+    Odotettu järjestys:
+      0 id, 1 nimi, 2 email, 3 puhelin, 4 pvm, 5 klo,
+      6 kesto, 7 hinta, 8 vahvistettu, 9 tila, 10 luotu
+    """
+    if len(varaus) != 11:
+        raise ValueError(f"Kenttiä {len(varaus)}, odotettiin 11: {varaus!r}")
 
-def hae_varaukset(varaustiedosto: str) -> list:
-    varaukset = []
-    varaukset.append(["varausId", "nimi", "sähköposti", "puhelin", "varauksenPvm", "varauksenKlo", "varauksenKesto", "hinta", "varausVahvistettu", "varattuTila", "varausLuotu"])
+    # Siistitään mahdolliset välilyönnit
+    varaus = [x.strip() for x in varaus]
+
+    # Muodostetaan sanakirja
+    return {
+        "varausId": int(varaus[0]),
+        "nimi": varaus[1],
+        "email": varaus[2],
+        "puhelin": varaus[3],
+        "varauksenPvm": datetime.strptime(varaus[4], "%Y-%m-%d").date(),
+        "varauksenKlo": datetime.strptime(varaus[5], "%H:%M").time(),
+        "varauksenKesto": int(varaus[6]),
+        # Hyväksy myös pilkku desimaalierottimena
+        "hinta": float(varaus[7].replace(",", ".")),
+        # Tee bool-parse hieman joustavammaksi:
+        "varausVahvistettu": varaus[8].strip().lower() in ("true", "1", "yes", "y", "on"),
+        "varattuTila": varaus[9],
+        "varausLuotu": datetime.strptime(varaus[10], "%Y-%m-%d %H:%M:%S"),
+    }
+
+def hae_varaukset(varaustiedosto: str) -> Dict[int, Dict[str, Any]]:
+    varaukset: Dict[int, Dict[str, Any]] = {}
     with open(varaustiedosto, "r", encoding="utf-8") as f:
-        for varaus in f:
-            varaus = varaus.strip()
-            varaustiedot = varaus.split('|')
-            varaukset.append(muunna_varaustiedot(varaustiedot))
+        for rivi_numero, raw in enumerate(f, start=1):
+            rivi = raw.strip()
+            if not rivi or rivi.startswith("#"):
+                continue  # ohitetaan tyhjät/kommentit
+            osat = [o.strip() for o in rivi.split("|")]
+            try:
+                varaus = muunna_varaustiedot(osat)
+            except Exception as e:
+                raise ValueError(f"Virhe rivillä {rivi_numero}: {e}") from e
+
+            key = varaus["varausId"]
+            if key in varaukset:
+                # Voit halutessasi nostaa virheen duplikaateista:
+                # raise ValueError(f"Duplikaatti varausId {key} rivillä {rivi_numero}")
+                print(f"Varoitus: duplikaatti varausId {key} rivillä {rivi_numero}, korvataan aiempi.")
+            varaukset[key] = varaus
     return varaukset
 
-def vahvistetut_varaukset(varaukset: list):
-    for varaus in varaukset[1:]:
-        if(varaus[8]):
-            print(f"- {varaus[1]}, {varaus[9]}, {varaus[4].strftime('%d.%m.%Y')} klo {varaus[5].strftime('%H.%M')}")
-
+def vahvistetut_varaukset(varaukset: Dict[int, Dict[str, Any]]) -> None:
+    for v in varaukset.values():
+        if v["varausVahvistettu"]:
+            print(f"- {v['nimi']}, {v['varattuTila']}, {v['varauksenPvm'].strftime('%d.%m.%Y')} klo {v['varauksenKlo'].strftime('%H.%M')}")
     print()
 
-def pitkat_varaukset(varaukset: list):
-    for varaus in varaukset[1:]:
-        if(varaus[6] >= 3):
-            print(f"- {varaus[1]}, {varaus[4].strftime('%d.%m.%Y')} klo {varaus[5].strftime('%H.%M')}, kesto {varaus[6]} h, {varaus[9]}")
-
+def pitkat_varaukset(varaukset: Dict[int, Dict[str, Any]]) -> None:
+    for v in varaukset.values():
+        if v["varauksenKesto"] >= 3:
+            print(f"- {v['nimi']}, {v['varauksenPvm'].strftime('%d.%m.%Y')} klo {v['varauksenKlo'].strftime('%H.%M')}, kesto {v['varauksenKesto']} h, {v['varattuTila']}")
     print()
 
-def varausten_vahvistusstatus(varaukset: list):
-    for varaus in varaukset[1:]:
-        if(varaus[8]):
-            print(f"{varaus[1]} → Vahvistettu")
-        else:
-            print(f"{varaus[1]} → EI vahvistettu")
 
+def varausten_vahvistusstatus(varaukset: Dict[int, Dict[str, Any]]) -> None:
+    for v in varaukset.values():
+        status = "Vahvistettu" if v["varausVahvistettu"] else "EI vahvistettu"
+        print(f"{v['nimi']} → {status}")
     print()
 
-def varausten_lkm(varaukset: list):
-    vahvistetutVaraukset = 0
-    eiVahvistetutVaraukset = 0
-    for varaus in varaukset[1:]:
-        if(varaus[8]):
-            vahvistetutVaraukset += 1
-        else:
-            eiVahvistetutVaraukset += 1
 
-    print(f"- Vahvistettuja varauksia: {vahvistetutVaraukset} kpl")
-    print(f"- Ei-vahvistettuja varauksia: {eiVahvistetutVaraukset} kpl")
+def varausten_lkm(varaukset: Dict[int, Dict[str, Any]]) -> None:
+    vahvistetut = sum(1 for v in varaukset.values() if v["varausVahvistettu"])
+    ei_vahvistetut = len(varaukset) - vahvistetut
+    print(f"- Vahvistettuja varauksia: {vahvistetut} kpl")
+    print(f"- Ei-vahvistettuja varauksia: {ei_vahvistetut} kpl")
     print()
 
-def varausten_kokonaistulot(varaukset: list):
-    varaustenTulot = 0
-    for varaus in varaukset[1:]:
-        if(varaus[8]):
-            varaustenTulot += varaus[6]*varaus[7]
-
-    print("Vahvistettujen varausten kokonaistulot:", f"{varaustenTulot:.2f}".replace('.', ','), "€")
+def varausten_kokonaistulot(varaukset: Dict[int, Dict[str, Any]]) -> None:
+    tulot = sum(v["varauksenKesto"] * v["hinta"] for v in varaukset.values() if v["varausVahvistettu"])
+    print("Vahvistettujen varausten kokonaistulot:", f"{tulot:.2f}".replace('.', ','), "€")
     print()
 
-def main():
+
+def main() -> None:
     varaukset = hae_varaukset("varaukset.txt")
     print("1) Vahvistetut varaukset")
     vahvistetut_varaukset(varaukset)
