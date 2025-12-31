@@ -6,7 +6,7 @@
 #
 # See LICENSE file in the project root for full license information.
 
-'''aion käyttää sanakirjaa tässä tehtävässä'''
+'''käytän sanakirjaa (dict) tässä tehtävässä'''
 
 from datetime import datetime
 from typing import List, Dict, Any
@@ -19,7 +19,7 @@ def muunna_varaustiedot(varaus: List[str]) -> Dict[str, Any]:
       6 kesto, 7 hinta, 8 vahvistettu, 9 tila, 10 luotu
     """
     if len(varaus) != 11:
-        raise ValueError(f"Kenttiä {len(varaus)}, odotettiin 11: {varaus!r}")
+        raise ValueError(f"Kenttiä {len(varaus)}, odotettiin 11: {varaus!r}") # tarkistaa alkioiden määrän
 
     # Siistitään mahdolliset välilyönnit
     varaus = [x.strip() for x in varaus]
@@ -52,7 +52,7 @@ def hae_varaukset(varaustiedosto: str) -> Dict[int, Dict[str, Any]]:
             try:
                 varaus = muunna_varaustiedot(osat)
             except Exception as e:
-                raise ValueError(f"Virhe rivillä {rivi_numero}: {e}") from e
+                raise ValueError(f"Virhe rivillä {rivi_numero}: {e}") from e # etsii virheen ja kertoo missä se on
 
             key = varaus["varausId"]
             if key in varaukset:
